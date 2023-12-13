@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 import socket
-from helpers import DataParser
-from models.payload_model import PayloadModel
-
+from lib.helpers.DataParser import DataParser
+from lib.models.payload_model import PayloadModel
+from threading import Thread
 class AbstractEchoServer(ABC):
     def __init__(self, host, port):
         self.host = host
@@ -19,8 +19,8 @@ class AbstractEchoServer(ABC):
         connection, client_address = self.server_socket.accept()
         print(f"Connection from {client_address}")
         try:
-            #TODO: Create new thread for new connection inorder to handle async
             self.handle_client(connection)
+            Thread(target=self.handle_client, args=(connection,))
         finally:
             connection.close()
 
@@ -59,6 +59,9 @@ class AbstractEchoServer(ABC):
 class EventBaseServer(AbstractEchoServer):
     
     __subs__ = {}
+
+    def __init__(self, host = '0.0.0.0', port = 3500):
+        super().__init__(host, port)
     
     def on_event(self, command, payload):
         self.__subs__[command](payload)
