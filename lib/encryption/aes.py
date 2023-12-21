@@ -4,9 +4,9 @@ from cryptography.hazmat.backends import default_backend
 import os
 
 class AESCipher:
-    def __init__(self):
-        self.key = os.urandom(32)  # Generate a random 256-bit (32-byte) key
-        self.iv = os.urandom(16)    # Generate a random 128-bit (16-byte) IV
+    def __init__(self, key=os.urandom(32), iv=os.urandom(16)):
+        self.key = key  # Generate a random 256-bit (32-byte) key
+        self.iv = iv    # Generate a random 128-bit (16-byte) IV
 
     def encrypt(self, plaintext):
         padder = padding.PKCS7(128).padder()

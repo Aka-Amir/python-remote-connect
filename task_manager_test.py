@@ -1,8 +1,8 @@
 import time
 
 from lib.threading.task import Task
+from lib.threading.signals import signals
 from lib.threading.task_manager import TaskManager
-from lib.threading.signals import kill_sign
 
 taskManager = TaskManager()
 
@@ -14,10 +14,18 @@ def Count(start_at: int, ends_at: int):
 
 
 
-count_task = Task(Count, 0, 10)
+task_one = Task(Count, 0, 10)
+task_two = Task(Count, 0, 10)
 
-t_id = taskManager.start(count_task)
+task_1 = taskManager.start(task_one)
+task_2 = taskManager.start(task_two)
 
-time.sleep(3)
-taskManager.emit_signal(kill_sign.KillSignal(t_id))
+
+while (not task_one.stop):
+  taskManager.emit_signal(signals.ContinueSignal(task_1))
+  taskManager.emit_signal(signals.PauseSignal(task_2))
+  time.sleep(3)
+  taskManager.emit_signal(signals.ContinueSignal(task_2))
+  taskManager.emit_signal(signals.PauseSignal(task_1))
+  time.sleep(1)
 

@@ -9,7 +9,7 @@ class Task():
     print(self.params)
     self.__fn__ = fn
     self.stop = False
-    
+    self.pause = False
     pass
 
   def execute(self):
@@ -23,9 +23,14 @@ class Task():
         yield 'EXIT_1'
         break
       yield i
+    self.stop = True
     yield 'EXIT_0'
 
   def __process_signal__(self, signal: str):
     if (signal.startswith('SIGKILL')):
       self.stop = True
+    if (signal.startswith('SIGPAUSE')):
+      self.pause = True
+    if(signal.startswith('SIGCONT')):
+      self.pause = False
     

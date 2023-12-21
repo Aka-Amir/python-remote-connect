@@ -27,12 +27,11 @@ class PayloadModel:
     return self
 
   def build(self):
-    result = {
-      'command': self.command,
-      'data': self.data 
-    }
-
+    
     for pipe_line in self.__build_pipe_line__:
-      result = pipe_line(result)
+      result = pipe_line({
+        'command': self.command,
+        'data': self.data 
+      })
 
     return result

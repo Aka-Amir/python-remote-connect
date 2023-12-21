@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
 import socket
+from abc import ABC, abstractmethod
 from lib.helpers.DataParser import DataParser
 from lib.models.payload_model import PayloadModel
 from threading import Thread
+
 class AbstractEchoServer(ABC):
     def __init__(self, host, port):
         self.host = host
@@ -32,11 +33,9 @@ class AbstractEchoServer(ABC):
                 if data:
                     payload = PayloadModel(as_dict=DataParser.DecodeData(data))
                     self.on_event(payload.command, payload.data)
-                    ack_payload = PayloadModel().set_command('ack').pipe(DataParser.EncodeData)
+                    ack_payload = PayloadModel().set_command('ack').set_payload('1').pipe(DataParser.EncodeData)
                     connection.sendall(ack_payload.build())
-                else:
-                    print("No more data from client.")
-                    break
+                
         except Exception as e:
             print(f"An error occurred: {e}")
         finally:
